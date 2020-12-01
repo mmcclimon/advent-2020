@@ -1,9 +1,8 @@
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::str::FromStr;
-
-use std::collections::HashSet;
 
 fn main() -> std::io::Result<()> {
   let mut nums = HashSet::new();
