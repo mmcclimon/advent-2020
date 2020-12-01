@@ -4,17 +4,19 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::str::FromStr;
 
-fn main() -> std::io::Result<()> {
+use advent::Result;
+
+fn main() -> Result<()> {
   let mut nums = HashSet::new();
   let reader = BufReader::new(File::open("input/d1.txt")?);
 
   for line in reader.lines() {
-    let num = i32::from_str(&line.unwrap()).unwrap();
+    let num = i32::from_str(&line?)?;
     nums.insert(num);
   }
 
   // find two that add up to 2020
-  let found = look_for(2020, &nums).unwrap();
+  let found = look_for(2020, &nums).expect("no solution found for part 1!?");
   output(1, found);
 
   // find three that add up to 2020
