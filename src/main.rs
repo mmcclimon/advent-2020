@@ -15,32 +15,36 @@ fn main() -> std::io::Result<()> {
   }
 
   // find two that add up to 2020
+  let found = look_for(2020, &nums).unwrap();
+  output(1, found);
+
+  // find three that add up to 2020
   for n in &nums {
-    let complement = 2020 - n;
-    if nums.contains(&complement) {
-      println!("part 1: {} ({} and {})", n * complement, n, complement);
+    let got = look_for(2020 - n, &nums);
+
+    if let Some(mut found) = got {
+      found.push(*n);
+      output(2, found);
       break;
     }
   }
 
-  // find three that add up to 2020
-  'outer: for n in &nums {
-    let target = 2020 - n;
+  Ok(())
+}
 
-    for m in &nums {
-      let complement = target - m;
-      if nums.contains(&complement) {
-        println!(
-          "part 2: {} ({}, {} and {})",
-          m * n * complement,
-          n,
-          m,
-          complement
-        );
-        break 'outer;
-      }
+fn look_for(target: i32, nums: &HashSet<i32>) -> Option<Vec<i32>> {
+  for n in nums {
+    let complement = target - n;
+    if nums.contains(&complement) {
+      return Some(vec![*n, complement]);
     }
   }
 
-  Ok(())
+  None
+}
+
+fn output(part: u8, mut nums: Vec<i32>) {
+  nums.sort_unstable();
+  let prod = nums.iter().fold(1, |acc, x| acc * x);
+  println!("part {}: {} {:?}", part, prod, nums);
 }
