@@ -20,22 +20,17 @@ struct Passport {
 fn main() -> Result<()> {
   let reader = BufReader::new(File::open("input/d4.txt")?);
 
-  let lines = reader.lines().map(|l| l.unwrap()).collect::<Vec<_>>();
+  let mut lines = reader.lines().map(|l| l.unwrap()).peekable();
   let mut raw = vec![];
 
-  // surely there's a better way to do this with take_while or something
-  let mut i = 0;
-  while i < lines.len() {
-    let mut pp = vec![];
-
-    while i < lines.len() && !lines[i].is_empty() {
-      pp.push(lines[i].to_string());
-      i += 1;
-    }
-
-    i += 1;
-
-    raw.push(pp.join(" "));
+  while lines.peek().is_some() {
+    raw.push(
+      lines
+        .by_ref()
+        .take_while(|l| !l.is_empty())
+        .collect::<Vec<_>>()
+        .join(" "),
+    );
   }
 
   let passports: Vec<Passport> =
