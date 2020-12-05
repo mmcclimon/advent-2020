@@ -9,7 +9,20 @@ fn main() -> Result<()> {
 
   let mut ids = reader
     .lines()
-    .map(|l| id_for_seat(&l.unwrap()))
+    .map(|l| l.unwrap())
+    .map(|pass| {
+      // munge into binary string
+      pass
+        .chars()
+        .map(|c| match c {
+          'F' | 'L' => "0",
+          'B' | 'R' => "1",
+          _ => unreachable!(),
+        })
+        .collect::<Vec<_>>()
+        .join("")
+    })
+    .map(|s| u16::from_str_radix(&s, 2).expect("bad binary?"))
     .collect::<Vec<_>>();
 
   ids.sort_unstable();
@@ -27,25 +40,4 @@ fn main() -> Result<()> {
   println!("part 2: {}", part2);
 
   Ok(())
-}
-
-fn id_for_seat(pass: &str) -> u16 {
-  let (rows, cols) = pass.split_at(7);
-  let row = binpart(rows, 128, 'F', 'B');
-  let col = binpart(cols, 8, 'L', 'R');
-  row * 8 + col
-}
-
-// there might be a better way to do this, but hey
-fn binpart(instructions: &str, max: u16, low_char: char, high_char: char) -> u16 {
-  let mut pair = (0, max);
-  for c in instructions.chars() {
-    match c {
-      _ if c == low_char => pair.1 = (pair.0 + pair.1) / 2,
-      _ if c == high_char => pair.0 = (pair.0 + pair.1) / 2,
-      _ => unreachable!(),
-    };
-  }
-
-  pair.1 - 1
 }
