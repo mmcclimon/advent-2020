@@ -1,16 +1,13 @@
-#![feature(try_trait)]
-
 use std::fmt;
 use std::io::Error as IoError;
 use std::num::ParseIntError;
-use std::option::NoneError;
 
 #[derive(Debug)]
 pub enum AdventError {
   Generic(String),
   Io(IoError),
   ParseInt(ParseIntError),
-  Empty(NoneError),
+  Empty,
 }
 
 type AE = AdventError;
@@ -24,7 +21,7 @@ impl fmt::Display for AdventError {
       AE::Generic(err) => write!(f, "{}", err),
       AE::Io(err) => write!(f, "{:?}", err),
       AE::ParseInt(err) => write!(f, "{:?}", err),
-      AE::Empty(err) => write!(f, "{:?}", err),
+      AE::Empty => write!(f, "empty"),
     }
   }
 }
@@ -38,11 +35,5 @@ impl From<IoError> for AdventError {
 impl From<ParseIntError> for AdventError {
   fn from(err: ParseIntError) -> Self {
     AE::ParseInt(err)
-  }
-}
-
-impl From<NoneError> for AdventError {
-  fn from(err: NoneError) -> Self {
-    AE::Empty(err)
   }
 }
